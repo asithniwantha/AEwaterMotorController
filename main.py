@@ -1,6 +1,6 @@
 import wifimgr
-import machine
-from machine import Pin, SoftI2C
+import machine # type: ignore
+from machine import Pin, SoftI2C # type: ignore
 import asyncio
 import _thread
 import socket
