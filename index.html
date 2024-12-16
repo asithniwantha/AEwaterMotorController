@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>AE water motor controller</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            /* Arrange elements vertically */
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            /* Center text within the container */
+            margin-top: 20px;
+            /* Add some top margin */
+        }
+
+        #timer {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .data-display {
+            font-size: 1.5em;
+            /* Make the numbers larger */
+            margin-bottom: 10px;
+            /* Add some spacing below each number */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>AE Motor Controller</h1>
+        <div class="data-display">
+            ON TIME: <span id="number1">0</span>
+        </div>
+        <div class="data-display">
+            OFF TIME : <span id="number2">0</span>
+        </div>
+        <div id="timer">0.00</div>
+        <!-- <button onclick="getData()">Get Data</button> -->
+
+        <form action="/submit" method="post">
+            <input type="submit" value="set times">
+        </form>
+
+    </div>
+
+    <script>
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60); // Get whole minutes
+            const remainingSeconds = seconds % 60; // Get remaining seconds
+            const formattedTime = `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+            return formattedTime;
+        }
+        function getData() {
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("number1").textContent = data.ontime;
+                    document.getElementById("number2").textContent = data.offtime;
+                    document.getElementById("timer").textContent = formatTime(data.timer); // Display timer from ESP
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                });
+        }
+        //Call getData() function every 1000ms
+        setInterval(getData, 1000);
+    </script>
+</body>
+
+</html>
