@@ -132,7 +132,10 @@ def configure_main(delay, id):
 
     configChanged = False
     while True:
-        server.start()
+        try:
+            server.start()
+        except OSError as e:
+            machine.reset()
         server._elapsed_time = timer_seconds
         if myconfig['timer']['ontime'] != server.on_time_value:
             configChanged = True
@@ -146,8 +149,6 @@ def configure_main(delay, id):
             myconfigfile.write(myconfig)
 
         if configChanged:
-            for i in range(9999999):
-                pass
             machine.reset()
     machine.reset()
 
