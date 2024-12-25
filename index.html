@@ -1,59 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>AE water motor controller</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AE Motor Controller</title>
     <style>
         body {
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            /* Arrange elements vertically */
-            align-items: center;
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
-            background-color: #f0f0f0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         .container {
-            background-color: white;
+            background-color: #fff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
-            /* Center text within the container */
-            margin-top: 20px;
-            /* Add some top margin */
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .data-display {
+            margin: 10px 0;
+            font-size: 1.2em;
         }
 
         #timer {
             font-size: 2em;
-            margin-bottom: 10px;
+            margin: 20px 0;
+            color: #007BFF;
         }
 
-        button {
-            background-color: #4CAF50;
+        .state-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .state-indicator input[type="checkbox"] {
+            margin-left: 10px;
+            transform: scale(1.5);
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
             border: none;
-            color: white;
             padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin-top: 10px;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
+            font-size: 1em;
         }
 
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .data-display {
-            font-size: 1.5em;
-            /* Make the numbers larger */
-            margin-bottom: 10px;
-            /* Add some spacing below each number */
+        input[type="submit"]:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -65,15 +79,17 @@
             ON TIME: <span id="number1">0</span>
         </div>
         <div class="data-display">
-            OFF TIME : <span id="number2">0</span>
+            OFF TIME: <span id="number2">0</span>
+        </div>
+        <div class="data-display state-indicator">
+            Tank full state:
+            <input type="checkbox" id="state" disabled>
         </div>
         <div id="timer">0.00</div>
-        <!-- <button onclick="getData()">Get Data</button> -->
 
         <form action="/submit" method="post">
-            <input type="submit" value="set times">
+            <input type="submit" value="Set Times">
         </form>
-
     </div>
 
     <script>
@@ -83,6 +99,7 @@
             const formattedTime = `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
             return formattedTime;
         }
+
         function getData() {
             fetch('/data')
                 .then(response => response.json())
@@ -90,12 +107,14 @@
                     document.getElementById("number1").textContent = data.ontime;
                     document.getElementById("number2").textContent = data.offtime;
                     document.getElementById("timer").textContent = formatTime(data.timer); // Display timer from ESP
+                    document.getElementById("state").checked = data.state; // Update checkbox state
                 })
                 .catch(error => {
                     console.error("Error fetching data:", error);
                 });
         }
-        //Call getData() function every 1000ms
+
+        // Call getData() function every 1000ms
         setInterval(getData, 1000);
     </script>
 </body>

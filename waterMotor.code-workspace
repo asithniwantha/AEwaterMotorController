@@ -7,6 +7,10 @@
 		{
 			"name": "serial:/COM5",
 			"uri": "serial://com5/"
+		},
+		{
+			"name": "serial:/COM4",
+			"uri": "serial://com4/"
 		}
 	],
 	"settings": {}

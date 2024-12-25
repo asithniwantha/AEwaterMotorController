@@ -9,6 +9,7 @@ class AJXServer:
         self.elapsed_time = 0
         self.on_time_value = 0
         self.off_time_value = 0
+        self.tank_state = False
 
         # Setter methods (using property decorators is generally preferred in Python)
     @property
@@ -43,6 +44,17 @@ class AJXServer:
             self._off_time_value = value
         else:
             raise TypeError("Off time value must be a number")
+
+    @property
+    def tank_state(self):
+        return self._tank_state
+    
+    @tank_state.setter
+    def tank_state(self, value):
+        if isinstance(value, bool):  # Type checking
+            self._tank_state = value
+        else:
+            raise TypeError("Tank state must be a boolean")
 
     def start(self):
         client, addr = self.server_socket.accept()
@@ -128,7 +140,7 @@ class AJXServer:
 
     def handle_data(self, client):
         data = {"ontime": self.on_time_value,
-                "offtime": self.off_time_value, "timer": self.elapsed_time}
+                "offtime": self.off_time_value, "timer": self.elapsed_time, "state": self.tank_state}
         json_data = json.dumps(data)
         print(json_data)
         self.send_response(client, json_data, "application/json")
