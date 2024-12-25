@@ -63,7 +63,7 @@ class AJXServer:
             client.settimeout(0.5)
             request = b""
             try:
-                while "\r\n\r\n" not in request:
+                while "\r\n\r\n" not in request: # type: ignore
                     request += client.recv(512)
             except OSError:
                 pass
@@ -77,7 +77,7 @@ class AJXServer:
                 pass
 
             print("Request is:", request.decode())
-            if "HTTP" not in request:
+            if "HTTP" not in request: # type: ignore
                 return
 
             try:

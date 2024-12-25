@@ -9,6 +9,13 @@ import AJXServer
 import ssd1306
 from configmgr import ConfigFile
 
+# Constants
+CONFIG_FILE_PATH = 'configuration.conf'
+I2C_SDA_PIN = 14
+I2C_SCL_PIN = 13
+DISPLAY_WIDTH = 128
+DISPLAY_HEIGHT = 32
+
 # Initialize pins
 led = Pin(2, Pin.OUT)
 relay_out_pin = Pin(33, Pin.OUT)
@@ -26,14 +33,14 @@ elapsed_time_m = 0
 tank_water_state = False
 
 # Initialize I2C and display
-i2c = SoftI2C(sda=Pin(14), scl=Pin(13))
-display = ssd1306.SSD1306_I2C(128, 32, i2c)
+i2c = SoftI2C(sda=Pin(I2C_SDA_PIN), scl=Pin(I2C_SCL_PIN))
+display = ssd1306.SSD1306_I2C(DISPLAY_WIDTH, DISPLAY_HEIGHT, i2c)
 
 
 async def timer_counter():
     global timer_seconds, ip_address, relay_state, elapsed_time_s, elapsed_time_m
 
-    myconfigfile = ConfigFile('configuration.conf')
+    myconfigfile = ConfigFile(CONFIG_FILE_PATH)
     myconfigfile.read()
     myconfig = myconfigfile.config
     on_time_str = str(myconfig['timer']['ontime'])
@@ -42,8 +49,7 @@ async def timer_counter():
     while True:
         elapsed_time_s = int(timer_seconds % 60)
         elapsed_time_m = int(timer_seconds / 60)
-        print(
-            f"timer counter: {timer_seconds} elapsed time >> {elapsed_time_m} : {elapsed_time_s}")
+        print(f"timer counter: {timer_seconds} elapsed time >> {elapsed_time_m} : {elapsed_time_s}")
 
         display.fill(0)
         display.text(str(ip_address), 0, 0, 1)
@@ -67,7 +73,7 @@ async def timer_counter():
 async def relay_switcher():
     global timer_seconds, elapsed_time_m, relay_state
 
-    myconfigfile = ConfigFile('configuration.conf')
+    myconfigfile = ConfigFile(CONFIG_FILE_PATH)
     myconfigfile.read()
     myconfig = myconfigfile.config
 
@@ -110,7 +116,7 @@ async def main():
 def configure_main(delay, id):
     global server, ip_address
 
-    myconfigfile = ConfigFile('configuration.conf')
+    myconfigfile = ConfigFile(CONFIG_FILE_PATH)
     myconfigfile.read()
     myconfig = myconfigfile.config
     print("configurations loaded")
